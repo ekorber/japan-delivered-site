@@ -9,3 +9,11 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  price       Int
+  inStock     Boolean   @default(true)
+}
