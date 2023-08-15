@@ -11,9 +11,9 @@ datasource db {
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   title       String
   description String
   price       Int
-  inStock     Boolean   @default(true)
+  inStock     Boolean @default(true)
 }
