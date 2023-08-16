@@ -1,5 +1,5 @@
 import Image from "next/image"
-import styles from '../../styles/productListItem.module.css'
+import styles from '@/styles/productListItem.module.css'
 
 type ProductListItemProps = {
     imageURL: string,

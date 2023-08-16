@@ -1,6 +1,6 @@
 
 import { Shojumaru } from 'next/font/google'
-import styles from '../../styles/primaryButton.module.css'
+import styles from '@/styles/primaryButton.module.css'
 
 const shojumaru = Shojumaru({
     weight: '400',
