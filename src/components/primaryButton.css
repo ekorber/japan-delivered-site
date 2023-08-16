@@ -1,0 +1,15 @@
+.btn-container {
+    margin-bottom: 10px;
+    height: 40px;
+    text-align: center;
+}
+
+.btn {
+    width: 90%;
+    height: 100%;
+    background-color: #bc002d;
+    color: white;
+    font-size: 22px;
+    border: none;
+
+}
