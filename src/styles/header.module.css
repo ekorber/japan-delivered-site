@@ -18,21 +18,13 @@
     color: white;
     border: none;
     text-align: center;
-}
-
-.cart-btn,
-.menu-btn {
     flex-basis: 65px;
     font-size: 25px;
     position: relative;
     top: -4px;
 }
 
-.menu-btn:hover i {
-    animation: header-hover-anim 0.2s forwards;
-}
-
-.cart-btn:hover i {
+.btn:hover i {
     animation: header-hover-anim 0.2s forwards;
 }
 
