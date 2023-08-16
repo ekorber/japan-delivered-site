@@ -1,0 +1,11 @@
+.product_list {
+    margin: 20px 0 10px 0;
+    padding: 0 10vw 0 10vw;
+
+    display: grid;
+    grid-template-columns: repeat(5, 80vw);
+    gap: 5vw;
+
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+}
