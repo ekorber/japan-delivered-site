@@ -1,15 +1,15 @@
-import Script from "next/script";
-import './header.css'
+import Script from "next/script"
+import styles from '../../styles/header.module.css'
 
 export default function Header() {
     return (
         <>
             <Script src="https://kit.fontawesome.com/72723071e2.js" strategy="lazyOnload" />
 
-            <header className="header">
-                <button className="btn menu-btn"><i className="fa-solid fa-bars"></i></button>
-                <input className="searchbar" type="search" placeholder=" What would you like from Japan?" />
-                <button className="btn cart-btn"><i className="fa-solid fa-cart-shopping"></i></button>
+            <header className={styles.header}>
+                <button className={styles.btn}><i className="fa-solid fa-bars"></i></button>
+                <input className={styles.searchbar} type="search" placeholder=" What would you like from Japan?" />
+                <button className={styles.btn}><i className="fa-solid fa-cart-shopping"></i></button>
             </header>
         </>
     );
