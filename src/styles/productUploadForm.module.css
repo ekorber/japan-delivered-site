@@ -5,11 +5,12 @@
     justify-content: center;
     grid-template-columns: 200px 1fr 60px 1fr 200px;
     grid-template-areas:
-        '. title . priceJPY .'
-        '. description . priceCAD .'
-        '. stock . priceUSD .'
-        '. tags . priceGBP .'
-        '. submitButton submitButton submitButton .';
+        '.  title            .               priceJPY       .'
+        '.  description      .               priceCAD       .'
+        '.  images           .               priceUSD       .'
+        '.  stock            .               priceGBP       .'
+        '.  tags             .               .              .'
+        '.  submitButton     submitButton    submitButton   .';
 }
 
 .title {
@@ -18,6 +19,10 @@
 
 .description {
     grid-area: description;
+}
+
+.images {
+    grid-area: images
 }
 
 .tags {
