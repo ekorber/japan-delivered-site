@@ -1,4 +1,3 @@
-
 import PrimaryButton from "@/components/primaryButton"
 import ProductList from "@/components/productList"
 import Header from "@/components/header"
