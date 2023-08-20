@@ -23,6 +23,7 @@ export async function submitProduct(data: FormData) {
         tags[i] = temp
     }
 
+    //Handle stock
     const stockString = data.get('stock') as string
     let stock = 99
     if (stockString) {
