@@ -7,6 +7,27 @@ export async function submitProduct(data: FormData) {
     const title = data.get('title') as string
     const description = data.get('description') as string
 
+    const imagesBlob = data.getAll('images') as Blob[]
+    let images: Buffer[] = []
+    for (let i = 0; i < imagesBlob.length; i++) {
+
+        if (imagesBlob[i].type != 'image/png' && imagesBlob[i].type != 'image/jpeg' && imagesBlob[i].type != 'image/webp') {
+            console.log('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format!')
+            return
+        }
+
+        const maxImageSize = 2000 // In kilobytes
+        if ((imagesBlob[i].size / 1024) > maxImageSize) {
+            console.log('Image Upload Failure: All image files need to be less than 2MB in size!')
+            return
+        }
+
+        images.push(Buffer.from(await imagesBlob[i].arrayBuffer()))
+    }
+
+    const stockString = data.get('stock') as string
+    const stock = parseInt(stockString)
+
     const priceStringJPY = data.get('price-jpy') as string
     const priceJPY = parseInt(priceStringJPY)
 
@@ -19,33 +40,22 @@ export async function submitProduct(data: FormData) {
     const priceStringGBP = data.get('price-gbp') as string
     const priceGBP = parseInt(priceStringGBP)
 
-
-    const MAX_TAGS = 8
-    const MAX_TAG_LENGTH = 30
-
     //String formating for tags
     const tagsString = data.get('tags') as string
-    const tags = tagsString.toLowerCase().split(',', MAX_TAGS)
-    for (let i = 0; i < tags.length; i++) {
-        let temp = tags[i].trim()
-        if (temp.length > MAX_TAG_LENGTH) {
-            temp = temp.substring(0, MAX_TAG_LENGTH)
+    const tagsArray = tagsString.toLowerCase().split(',')
+    const tags = []
+    for (let i = 0; i < tagsArray.length; i++) {
+        let temp = tagsArray[i].trim()
+        if (temp) {
+            tags.push(temp)
         }
-        tags[i] = temp
-    }
-
-    //Handle stock
-    const stockString = data.get('stock') as string
-    let stock = 99
-    if (stockString) {
-        stock = parseInt(stockString)
     }
 
     await prisma.product.create({
         data: {
             title,
             description,
-            imageURLs: [],
+            images,
             priceJPY,
             priceCAD,
             priceUSD,
@@ -64,48 +74,52 @@ export default function UploadProductPage() {
 
                 <div className={styles.title}>
                     <label htmlFor="title" className="block">Product Title</label>
-                    <input name="title" type="text" placeholder="Enter Title" className="text-center border-2 border-black w-full" required />
+                    <input name="title" type="text" placeholder="Enter Title" className="text-center border-2 border-black w-full" required minLength={3} maxLength={120} />
                 </div>
 
                 <div className={styles.description}>
                     <label htmlFor="description" className="block">Product Description</label>
-                    <textarea name="description" placeholder="Enter Description" className="text-center border-2 border-black w-full" required />
+                    <textarea name="description" placeholder="Enter Description" className="text-center border-2 border-black w-full" required minLength={3} maxLength={2000} />
+                </div>
+
+                <div className={styles.images}>
+                    <label htmlFor="images" className="block mb-1">Select the product images</label>
+                    <input name="images" type="file" accept="image/png, image/jpeg, image/webp" required multiple />
                 </div>
 
                 <div className={styles.stock}>
-                    <label htmlFor="stock" className="block">Available Stock (Optional)</label>
-                    <input name="stock" type="number" placeholder="Enter Stock" className="text-center border-2 border-black w-full" />
+                    <label htmlFor="stock" className="block">Available Stock</label>
+                    <input name="stock" type="number" placeholder="Enter Stock" className="text-center border-2 border-black w-full" required min={0} max={99} />
+                    <p className="text-blue-700">If stock is irrelevant, just enter 99</p>
                 </div>
 
                 <div className={styles.tags}>
                     <label htmlFor="tags" className="block">Product Tags</label>
-                    <input name="tags" placeholder="nintendo, joycon, zelda" className="text-center border-2 border-black w-full" required />
+                    <input name="tags" placeholder="nintendo, joycon, zelda" className="text-center border-2 border-black w-full" required minLength={2} maxLength={250} />
                     <p>(relevant for user searching and being offered related products)</p>
                     <p className="text-blue-700">Seperate them with a comma.</p>
-                    <p className="text-blue-700">30 characters max per tag.</p>
-                    <p className="text-blue-700">8 tags max.</p>
                 </div>
 
                 <div className={styles.priceJPY}>
                     <label htmlFor="price-jpy" className="block">Product Price (JPY)</label>
-                    <input name="price-jpy" type="number" placeholder="Enter Japanese Price" className="text-center border-2 border-black w-full" required />
+                    <input name="price-jpy" type="number" placeholder="Enter Japanese Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                 </div>
 
                 <div className={styles.priceCAD}>
                     <label htmlFor="price-cad" className="block">Product Price (CAD)</label>
-                    <input name="price-cad" type="number" placeholder="Enter Canadian Price" className="text-center border-2 border-black w-full" required />
+                    <input name="price-cad" type="number" placeholder="Enter Canadian Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
                 <div className={styles.priceUSD}>
-                    <label htmlFor="price-usd" className="block">Product Price (USD) IN CENTS</label>
-                    <input name="price-usd" type="number" placeholder="Enter American Price" className="text-center border-2 border-black w-full" required />
+                    <label htmlFor="price-usd" className="block">Product Price (USD)</label>
+                    <input name="price-usd" type="number" placeholder="Enter American Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
                 <div className={styles.priceGBP}>
-                    <label htmlFor="price-gbp" className="block">Product Price (GBP) IN CENTS</label>
-                    <input name="price-gbp" type="number" placeholder="Enter British Price" className="text-center border-2 border-black w-full" required />
+                    <label htmlFor="price-gbp" className="block">Product Price (GBP)</label>
+                    <input name="price-gbp" type="number" placeholder="Enter British Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
