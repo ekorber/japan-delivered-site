@@ -15,7 +15,10 @@ model Product {
   title       String
   description String
   imageURLs   String[]
-  price       Int
+  priceJPY    Int
+  priceCAD    Int
+  priceUSD    Int
+  priceGBP    Int
   stock       Int      @default(99)
   tags        String[]
 }

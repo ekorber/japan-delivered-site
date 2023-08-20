@@ -4,7 +4,10 @@ CREATE TABLE "Product" (
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "imageURLs" TEXT[],
-    "price" INTEGER NOT NULL,
+    "priceJPY" INTEGER NOT NULL,
+    "priceCAD" INTEGER NOT NULL,
+    "priceUSD" INTEGER NOT NULL,
+    "priceGBP" INTEGER NOT NULL,
     "stock" INTEGER NOT NULL DEFAULT 99,
     "tags" TEXT[],
 
