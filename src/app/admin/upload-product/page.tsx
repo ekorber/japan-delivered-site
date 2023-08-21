@@ -1,5 +1,6 @@
 import { prisma } from "@/db"
 import styles from '@/styles/productUploadForm.module.css'
+import Link from "next/link"
 
 export async function submitProduct(data: FormData) {
     "use server"
@@ -69,7 +70,10 @@ export async function submitProduct(data: FormData) {
 export default function UploadProductPage() {
     return (
         <>
-            <h1 className="text-center my-20 text-3xl">Upload A New Product</h1>
+            <div className="w-24 mx-auto">
+                <Link href='/admin/dashboard'><p className="text-center mt-10 py-3 text-xl bg-black text-white hover:bg-blue-700">Back</p></Link>
+            </div>
+            <h1 className="text-center mt-12 mb-20 text-3xl">Upload A New Product</h1>
             <form action={submitProduct} method="POST" className={styles.formLayout}>
 
                 <div className={styles.title}>
