@@ -1,80 +1,64 @@
-import { prisma } from "@/db"
-import styles from '@/styles/productUploadForm.module.css'
+"use client"
+
 import Link from "next/link"
-
-export async function submitProduct(data: FormData) {
-    "use server"
-
-    const title = data.get('title') as string
-    const description = data.get('description') as string
-
-    const imagesBlob = data.getAll('images') as Blob[]
-    let images: Buffer[] = []
-    for (let i = 0; i < imagesBlob.length; i++) {
-
-        if (imagesBlob[i].type != 'image/png' && imagesBlob[i].type != 'image/jpeg' && imagesBlob[i].type != 'image/webp') {
-            console.log('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format!')
-            return
-        }
-
-        const maxImageSize = 2000 // In kilobytes
-        if ((imagesBlob[i].size / 1024) > maxImageSize) {
-            console.log('Image Upload Failure: All image files need to be less than 2MB in size!')
-            return
-        }
-
-        images.push(Buffer.from(await imagesBlob[i].arrayBuffer()))
-    }
-
-    const stockString = data.get('stock') as string
-    const stock = parseInt(stockString)
-
-    const priceStringJPY = data.get('price-jpy') as string
-    const priceJPY = parseInt(priceStringJPY)
-
-    const priceStringCAD = data.get('price-cad') as string
-    const priceCAD = parseInt(priceStringCAD)
-
-    const priceStringUSD = data.get('price-usd') as string
-    const priceUSD = parseInt(priceStringUSD)
-
-    const priceStringGBP = data.get('price-gbp') as string
-    const priceGBP = parseInt(priceStringGBP)
-
-    //String formating for tags
-    const tagsString = data.get('tags') as string
-    const tagsArray = tagsString.toLowerCase().split(',')
-    const tags = []
-    for (let i = 0; i < tagsArray.length; i++) {
-        let temp = tagsArray[i].trim()
-        if (temp) {
-            tags.push(temp)
-        }
-    }
-
-    await prisma.product.create({
-        data: {
-            title,
-            description,
-            images,
-            priceJPY,
-            priceCAD,
-            priceUSD,
-            priceGBP,
-            stock,
-            tags,
-        }
-    })
-}
+import { useRouter } from 'next/navigation'
+import { FormEvent, useEffect, useState } from 'react'
+import styles from '@/styles/productUploadForm.module.css'
 
 export default function UploadProductPage() {
+
+    const router = useRouter()
+    const [isLoading, setLoading] = useState(false)
+
+    useEffect(() => {
+        setLoading(false)
+    }, [])
+
+    async function submitWithValidation(e: FormEvent<HTMLFormElement>) {
+
+        setLoading(true)
+        e.preventDefault()
+
+        const data = new FormData(e.currentTarget)
+
+        const maxImageSize = 2000 // In kilobytes
+        const imagesBlob = data.getAll('images') as Blob[]
+
+        for (let i = 0; i < imagesBlob.length; i++) {
+
+            if (imagesBlob[i].type != 'image/png' && imagesBlob[i].type != 'image/jpeg' && imagesBlob[i].type != 'image/webp') {
+                console.error('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format!')
+                return
+            }
+
+            if ((imagesBlob[i].size / 1024) > maxImageSize) {
+                console.error('Image Upload Failure: All image files need to be less than 2MB in size!')
+                return
+            }
+        }
+
+        const res = await fetch('/admin/dashboard/product/', {
+            method: 'POST',
+            body: data,
+        })
+
+        if (res.ok) {
+            router.push('/admin/dashboard')
+        } else {
+            setLoading(false)
+            console.error('The request could not be completed...')
+        }
+    }
+
     return (
         <>
             <div className="w-24 mx-auto">
                 <Link href='/admin/dashboard'><p className="text-center mt-10 py-3 text-xl bg-black text-white hover:bg-blue-700">Back</p></Link>
             </div>
+
             <h1 className="text-center mt-12 mb-20 text-3xl">Upload A New Product</h1>
-            <form action={submitProduct} method="POST" className={styles.formLayout}>
+
+            <form onSubmit={submitWithValidation} className={styles.formLayout}>
 
                 <div className={styles.title}>
                     <label htmlFor="title" className="block">Product Title</label>
@@ -128,7 +112,7 @@ export default function UploadProductPage() {
                 </div>
 
                 <div className={styles.submitButton}>
-                    <button type="submit" className="bg-black hover:bg-blue-700 text-white px-10 py-6">Upload product to database</button>
+                    <button type="submit" disabled={isLoading} className="enabled:bg-black enabled:hover:bg-blue-700 enabled:text-white px-10 py-6 disabled:bg-slate-400 disabled:text-black">{isLoading ? 'Loading...' : 'Upload product to database'}</button>
                 </div>
             </form>
         </>
