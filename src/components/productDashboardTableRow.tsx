@@ -15,7 +15,6 @@ export async function deleteProduct(id: string, removeProduct: Function) {
     })
 
     if (res.ok) {
-        const data = await res.json()
         removeProduct(id)
     }
 }
