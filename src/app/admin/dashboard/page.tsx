@@ -2,6 +2,7 @@
 
 import AdminButton from "@/components/adminButton";
 import ProductDashboardTableRow from "@/components/productDashboardTableRow";
+import { ProductListOrder, getProductListOrderingQueryValues } from "@/utils/productListOrdering";
 import { Product } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -9,9 +10,14 @@ import { useEffect, useState } from "react";
 export default function AdminDashboardPage() {
 
     const [products, setProducts] = useState<Product[]>([])
+    const [orderingType, setOrderingSelection] = useState<ProductListOrder>(ProductListOrder.TITLE_DESCENDING)
 
     useEffect(() => {
-        fetch('/admin/dashboard/product-list/', {
+
+        const params = getProductListOrderingQueryValues(orderingType)
+        const url = '/admin/dashboard/product-list?property=' + params[0] + '&order=' + params[1]
+
+        fetch(url, {
             method: 'GET'
         })
             .then((res) => res.json())
