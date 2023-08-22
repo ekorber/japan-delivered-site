@@ -2,17 +2,13 @@
 
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import styles from '@/styles/productUploadForm.module.css'
 
 export default function UploadProductPage() {
 
     const router = useRouter()
     const [isLoading, setLoading] = useState(false)
-
-    useEffect(() => {
-        setLoading(false)
-    }, [])
 
     async function submitWithValidation(e: FormEvent<HTMLFormElement>) {
 
