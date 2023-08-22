@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 export default function AdminDashboardPage() {
 
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useState<Product[]>([])
 
     useEffect(() => {
         fetch('/admin/dashboard/product-list/', {
@@ -20,7 +20,7 @@ export default function AdminDashboardPage() {
 
     function removeProductFromTable(id: string) {
         setProducts(products.filter(p =>
-            (p as Product).id !== id
+            p.id !== id
         ))
     }
 
@@ -50,7 +50,7 @@ export default function AdminDashboardPage() {
                     </thead>
                     <tbody>
                         {products.map((product) => {
-                            return <ProductDashboardTableRow product={product} key={(product as Product).id} removeProduct={removeProductFromTable} />
+                            return <ProductDashboardTableRow product={product} key={product.id} removeProduct={removeProductFromTable} />
                         })}
                     </tbody>
 
