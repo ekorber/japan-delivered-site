@@ -24,11 +24,13 @@ export default function UploadProductPage() {
 
             if (imagesBlob[i].type != 'image/png' && imagesBlob[i].type != 'image/jpeg' && imagesBlob[i].type != 'image/webp') {
                 console.error('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format!')
+                setLoading(false)
                 return
             }
 
             if ((imagesBlob[i].size / 1024) > maxImageSize) {
                 console.error('Image Upload Failure: All image files need to be less than 2MB in size!')
+                setLoading(false)
                 return
             }
         }
