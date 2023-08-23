@@ -19,11 +19,11 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
         title: '',
         description: '',
         images: ([] as Buffer[]),
-        priceJPY: 0,
-        priceCAD: 0,
-        priceUSD: 0,
-        priceGBP: 0,
-        stock: 0,
+        priceJPY: 100,
+        priceCAD: 100,
+        priceUSD: 100,
+        priceGBP: 100,
+        stock: 99,
         tags: ([] as string[]),
     })
     const [unprocessedTags, setUnprocessedTags] = useState('')
@@ -113,7 +113,7 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
 
                 <div className={styles.stock}>
                     <label htmlFor="stock" className="block">Available Stock</label>
-                    <input name="stock" type="number" value={input?.stock} onChange={(e) => setInput({ ...input, stock: parseInt(e.target.value) })} placeholder="Enter Stock" className="text-center border-2 border-black w-full" required min={0} max={99} />
+                    <input name="stock" type="number" value={(input?.stock) ? input?.stock : undefined} onChange={(e) => setInput({ ...input, stock: parseInt(e.target.value) })} placeholder="Enter Stock" className="text-center border-2 border-black w-full" required min={0} max={99} />
                     <p className="text-blue-700">If stock is irrelevant, just enter 99</p>
                 </div>
 
@@ -126,24 +126,24 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
 
                 <div className={styles.priceJPY}>
                     <label htmlFor="price-jpy" className="block">Product Price (JPY)</label>
-                    <input name="price-jpy" type="number" value={input?.priceJPY} onChange={(e) => setInput({ ...input, priceJPY: parseInt(e.target.value) })} placeholder="Enter Japanese Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
+                    <input name="price-jpy" type="number" value={(input?.priceJPY) ? input?.priceJPY : undefined} onChange={(e) => setInput({ ...input, priceJPY: parseInt(e.target.value) })} placeholder="Enter Japanese Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                 </div>
 
                 <div className={styles.priceCAD}>
                     <label htmlFor="price-cad" className="block">Product Price (CAD)</label>
-                    <input name="price-cad" type="number" value={input?.priceCAD} onChange={(e) => setInput({ ...input, priceCAD: parseInt(e.target.value) })} placeholder="Enter Canadian Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
+                    <input name="price-cad" type="number" value={(input?.priceCAD) ? input?.priceCAD : undefined} onChange={(e) => setInput({ ...input, priceCAD: parseInt(e.target.value) })} placeholder="Enter Canadian Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
                 <div className={styles.priceUSD}>
                     <label htmlFor="price-usd" className="block">Product Price (USD)</label>
-                    <input name="price-usd" type="number" value={input?.priceUSD} onChange={(e) => setInput({ ...input, priceUSD: parseInt(e.target.value) })} placeholder="Enter American Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
+                    <input name="price-usd" type="number" value={(input?.priceUSD) ? input?.priceUSD : undefined} onChange={(e) => setInput({ ...input, priceUSD: parseInt(e.target.value) })} placeholder="Enter American Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
                 <div className={styles.priceGBP}>
                     <label htmlFor="price-gbp" className="block">Product Price (GBP)</label>
-                    <input name="price-gbp" type="number" value={input?.priceGBP} onChange={(e) => setInput({ ...input, priceGBP: parseInt(e.target.value) })} placeholder="Enter British Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
+                    <input name="price-gbp" type="number" value={(input?.priceGBP) ? input?.priceGBP : undefined} onChange={(e) => setInput({ ...input, priceGBP: parseInt(e.target.value) })} placeholder="Enter British Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
