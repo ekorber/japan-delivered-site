@@ -3,6 +3,8 @@
 import { Product } from "@prisma/client";
 import AdminButton from "./adminButton";
 import { Dispatch, SetStateAction, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export async function deleteProduct(id: string, removeProduct: Function, setEnabled: Dispatch<SetStateAction<boolean>>) {
 
@@ -29,6 +31,8 @@ type ProductDashboardTableRowProps = {
 }
 
 export default function ProductDashboardTableRow({ product, removeProduct }: ProductDashboardTableRowProps) {
+
+    const router = useRouter()
     const [enabled, setEnabled] = useState(true)
 
     let displayValue = ''
@@ -46,7 +50,7 @@ export default function ProductDashboardTableRow({ product, removeProduct }: Pro
             <td className="pl-2 border border-black">{(product.priceUSD / 100).toFixed(2)}</td>
             <td className="pl-2 border border-black">{(product.priceGBP / 100).toFixed(2)}</td>
             <td className="pl-2 border border-black">
-                <AdminButton buttonText="Edit" onClickFunction={() => console.log('Editing: ' + product.id)} className="p-2 m-1" />
+                <Link href={'/admin/edit-product/' + product.id}><AdminButton buttonText="Edit" className="p-2 m-1" /></Link>
                 <AdminButton buttonText="Delete" onClickFunction={() => deleteProduct(product.id, removeProduct, setEnabled)} className="p-2 m-1" />
             </td>
         </tr>
