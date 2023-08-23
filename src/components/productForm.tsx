@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react"
-import styles from '@/styles/productUploadForm.module.css'
 import { Product } from "@prisma/client";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import styles from '@/styles/productUploadForm.module.css'
 
 type ProductFormProps = {
     requestMethod: 'POST' | 'PUT',
@@ -66,13 +68,15 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
             }
 
             if (imagesBlob[i].type != 'image/png' && imagesBlob[i].type != 'image/jpeg' && imagesBlob[i].type != 'image/webp') {
-                console.error('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format!')
+                toast.error('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format.')
+                console.error('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format.')
                 setLoading(false)
                 return
             }
 
             if ((imagesBlob[i].size / 1024) > maxImageSize) {
-                console.error('Image Upload Failure: All image files need to be less than 2MB in size!')
+                toast.error('Image Upload Failure: All image files need to be less than 2MB in size.')
+                console.error('Image Upload Failure: All image files need to be less than 2MB in size.')
                 setLoading(false)
                 return
             }
@@ -113,7 +117,7 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
 
                 <div className={styles.stock}>
                     <label htmlFor="stock" className="block">Available Stock</label>
-                    <input name="stock" type="number" value={(input?.stock) ? input?.stock : undefined} onChange={(e) => setInput({ ...input, stock: parseInt(e.target.value) })} placeholder="Enter Stock" className="text-center border-2 border-black w-full" required min={0} max={99} />
+                    <input name="stock" type="number" value={input?.stock || undefined} onChange={(e) => setInput({ ...input, stock: parseInt(e.target.value) })} placeholder="Enter Stock" className="text-center border-2 border-black w-full" required min={0} max={99} />
                     <p className="text-blue-700">If stock is irrelevant, just enter 99</p>
                 </div>
 
@@ -126,24 +130,24 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
 
                 <div className={styles.priceJPY}>
                     <label htmlFor="price-jpy" className="block">Product Price (JPY)</label>
-                    <input name="price-jpy" type="number" value={(input?.priceJPY) ? input?.priceJPY : undefined} onChange={(e) => setInput({ ...input, priceJPY: parseInt(e.target.value) })} placeholder="Enter Japanese Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
+                    <input name="price-jpy" type="number" value={input?.priceJPY || undefined} onChange={(e) => setInput({ ...input, priceJPY: parseInt(e.target.value) })} placeholder="Enter Japanese Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                 </div>
 
                 <div className={styles.priceCAD}>
                     <label htmlFor="price-cad" className="block">Product Price (CAD)</label>
-                    <input name="price-cad" type="number" value={(input?.priceCAD) ? input?.priceCAD : undefined} onChange={(e) => setInput({ ...input, priceCAD: parseInt(e.target.value) })} placeholder="Enter Canadian Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
+                    <input name="price-cad" type="number" value={input?.priceCAD || undefined} onChange={(e) => setInput({ ...input, priceCAD: parseInt(e.target.value) })} placeholder="Enter Canadian Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
                 <div className={styles.priceUSD}>
                     <label htmlFor="price-usd" className="block">Product Price (USD)</label>
-                    <input name="price-usd" type="number" value={(input?.priceUSD) ? input?.priceUSD : undefined} onChange={(e) => setInput({ ...input, priceUSD: parseInt(e.target.value) })} placeholder="Enter American Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
+                    <input name="price-usd" type="number" value={input?.priceUSD || undefined} onChange={(e) => setInput({ ...input, priceUSD: parseInt(e.target.value) })} placeholder="Enter American Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
                 <div className={styles.priceGBP}>
                     <label htmlFor="price-gbp" className="block">Product Price (GBP)</label>
-                    <input name="price-gbp" type="number" value={(input?.priceGBP) ? input?.priceGBP : undefined} onChange={(e) => setInput({ ...input, priceGBP: parseInt(e.target.value) })} placeholder="Enter British Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
+                    <input name="price-gbp" type="number" value={input?.priceGBP || undefined} onChange={(e) => setInput({ ...input, priceGBP: parseInt(e.target.value) })} placeholder="Enter British Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
@@ -151,6 +155,18 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
                     <button type="submit" disabled={isLoading || (requestMethod == 'PUT' && !product)} className="enabled:bg-black enabled:hover:bg-blue-700 enabled:text-white px-10 py-6 disabled:bg-slate-400 disabled:text-black">{isLoading ? 'Loading...' : 'Submit product to database'}</button>
                 </div>
             </form>
+
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable
+                pauseOnHover={false}
+                theme="colored" />
         </>
     )
 }
