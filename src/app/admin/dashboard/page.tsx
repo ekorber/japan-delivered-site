@@ -36,9 +36,11 @@ export default function AdminDashboardPage() {
 
             <div className="flex flex-col w-4/5 m-auto">
 
-                <Link href='/admin/upload-product'>
-                    <AdminButton buttonText="Create New Product" className="px-3 py-2 mb-3" />
-                </Link>
+                <div className="w-auto">
+                    <Link href='/admin/upload-product'>
+                        <AdminButton buttonText="Create New Product" className="px-3 py-2 mb-3" />
+                    </Link>
+                </div>
 
                 <table className="text-left">
                     <thead>
