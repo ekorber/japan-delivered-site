@@ -91,6 +91,7 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
             router.push('/admin/dashboard')
         } else {
             setLoading(false)
+            toast.error('The request could not be completed...')
             console.error('The request could not be completed...')
         }
     }
