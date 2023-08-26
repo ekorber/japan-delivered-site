@@ -2,7 +2,7 @@ import { prisma } from '@/db'
 import { NextRequest } from 'next/server'
 
 export async function GET(req: NextRequest) {
-    const product = await prisma.product.findFirst({
+    const product = await prisma.product.findUnique({
         where: {
             id: req.nextUrl.searchParams.get('id') as string
         }
