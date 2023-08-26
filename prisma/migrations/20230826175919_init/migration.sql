@@ -3,7 +3,7 @@ CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "images" BYTEA[],
+    "images" TEXT[],
     "priceJPY" INTEGER NOT NULL,
     "priceCAD" INTEGER NOT NULL,
     "priceUSD" INTEGER NOT NULL,

@@ -14,7 +14,7 @@ model Product {
   id          String   @id @default(uuid())
   title       String
   description String
-  imageNames  String[]
+  images      String[]
   priceJPY    Int
   priceCAD    Int
   priceUSD    Int
