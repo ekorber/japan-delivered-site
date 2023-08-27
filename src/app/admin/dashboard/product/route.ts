@@ -22,7 +22,11 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
     const data = await req.formData()
-    const imagesBlob = data.getAll('images') as Blob[]
+    let imagesBlob: Blob[] = []
+
+    for (let i = 0; i < parseInt(data.get('numNewImages') as string); i++) {
+        imagesBlob.push(data.get('images[' + i + ']') as Blob)
+    }
 
     if (!validateUploadedImages(imagesBlob)) {
         return
@@ -66,9 +70,13 @@ export async function POST(req: Request) {
 
 export async function PUT(req: NextRequest) {
     const data = await req.formData()
-    const imagesBlob = data.getAll('images') as Blob[]
     let newImageNames: string[] = []
     let productToUpdate;
+
+    let imagesBlob: Blob[] = []
+    for (let i = 0; i < parseInt(data.get('numNewImages') as string); i++) {
+        imagesBlob.push(data.get('images[' + i + ']') as Blob)
+    }
 
     if (imagesBlob) {
         if (!validateUploadedImages(imagesBlob))
@@ -76,7 +84,7 @@ export async function PUT(req: NextRequest) {
 
         newImageNames = getManyRandomNames(imagesBlob.length)
 
-        //Upload to AWS
+        //Upload new images to AWS
         for (let i = 0; i < imagesBlob.length; i++) {
             await s3Put(imagesBlob[i], newImageNames[i])
         }
@@ -90,7 +98,6 @@ export async function PUT(req: NextRequest) {
 
         //If images already exist, add them to the new array
         newImageNames = newImageNames.concat(productToUpdate?.images as string[])
-
     }
 
     //String formating for tags

@@ -6,6 +6,7 @@ import { Product } from "@prisma/client";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '@/styles/productUploadForm.module.css'
+import TinyProductImage from "./tinyProductImage";
 
 type ProductFormProps = {
     requestMethod: 'POST' | 'PUT',
@@ -16,11 +17,11 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
 
     const router = useRouter()
     const [isLoading, setLoading] = useState(false)
-    const [input, setInput] = useState<Product>({
+    const [input, setInput] = useState({
         id: '',
         title: '',
         description: '',
-        images: ([] as string[]),
+        images: ([] as Buffer[]),
         priceJPY: 100,
         priceCAD: 100,
         priceUSD: 100,
@@ -28,6 +29,8 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
         stock: 99,
         tags: ([] as string[]),
     })
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+    const [preExistingImageURLs, setPreExistingImageURLs] = useState<string[]>([])
     const [unprocessedTags, setUnprocessedTags] = useState('')
 
 
@@ -44,6 +47,7 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
                 priceGBP: product.priceGBP,
                 stock: product.stock
             })
+            setPreExistingImageURLs(product.images)
             setUnprocessedTags(product.tags.toString())
         }
     }, [product])
@@ -58,7 +62,7 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
             data.append('id', input.id)
 
         const maxImageSize = 2000 // In kilobytes
-        const imagesBlob = data.getAll('images') as Blob[]
+        const imagesBlob = selectedFiles
 
         for (let i = 0; i < imagesBlob.length; i++) {
 
@@ -82,6 +86,12 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
             }
         }
 
+        selectedFiles.forEach((file, i) => {
+            data.append('images[' + i + ']', file)
+        });
+
+        data.append('numNewImages', selectedFiles.length.toString())
+
         const res = await fetch('/admin/dashboard/product/', {
             method: requestMethod,
             body: data,
@@ -96,6 +106,15 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
         }
     }
 
+    function onFileInputChange(fileList: FileList) {
+        let list: File[] = []
+        for (let i = 0; i < fileList.length; i++) {
+            list.push(fileList.item(i) as File)
+        }
+
+        if (list)
+            setSelectedFiles(selectedFiles.concat(list))
+    }
 
     return (
         <>
@@ -112,8 +131,21 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
                 </div>
 
                 <div className={styles.images}>
-                    <label htmlFor="images" className="block mb-1">Select the product images</label>
-                    <input name="images" type="file" accept="image/png, image/jpeg, image/webp" required={requestMethod == 'POST'} multiple />
+                    <label htmlFor="imageList" className="block mb-1">Select the product images</label>
+                    <input id="imageList" type="file" onChange={(e) => e.target.files ? onFileInputChange(e.target.files) : null} accept="image/png, image/jpeg, image/webp" required={requestMethod == 'POST'} multiple />
+
+                    {selectedFiles.map((file) => {
+                        const url = URL.createObjectURL(file)
+                        return (
+                            <TinyProductImage key={url} url={url} />
+                        )
+                    })}
+
+                    {preExistingImageURLs.map((url) => {
+                        return (
+                            <TinyProductImage key={url} url={url} />
+                        )
+                    })}
                 </div>
 
                 <div className={styles.stock}>
