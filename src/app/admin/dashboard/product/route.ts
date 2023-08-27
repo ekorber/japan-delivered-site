@@ -1,4 +1,8 @@
 import { prisma } from '@/db'
+import { getS3Url, s3Delete, s3Put } from '@/lib/awsHandler'
+import { getManyRandomNames } from '@/lib/cryptoHandler'
+import { validateUploadedImages } from '@/utils/imageHandler'
+import { Product } from '@prisma/client'
 import { NextRequest } from 'next/server'
 
 export async function GET(req: NextRequest) {
@@ -8,28 +12,28 @@ export async function GET(req: NextRequest) {
         }
     })
 
+    //Get the image urls
+    for (let i = 0; i < (product?.images as string[]).length; i++) {
+        (product as Product).images[i] = await getS3Url(product?.images[i] as string)
+        console.log(product?.images[i])
+    }
+
     return new Response(JSON.stringify(product))
 }
 
 export async function POST(req: Request) {
     const data = await req.formData()
-
     const imagesBlob = data.getAll('images') as Blob[]
-    let images: Buffer[] = []
+
+    if (!validateUploadedImages(imagesBlob)) {
+        return
+    }
+
+    const imageNames = getManyRandomNames(imagesBlob.length)
+
+    //Upload to AWS
     for (let i = 0; i < imagesBlob.length; i++) {
-
-        if (imagesBlob[i].type != 'image/png' && imagesBlob[i].type != 'image/jpeg' && imagesBlob[i].type != 'image/webp') {
-            console.log('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format!')
-            return
-        }
-
-        const maxImageSize = 2000 // In kilobytes
-        if ((imagesBlob[i].size / 1024) > maxImageSize) {
-            console.log('Image Upload Failure: All image files need to be less than 2MB in size!')
-            return
-        }
-
-        images.push(Buffer.from(await imagesBlob[i].arrayBuffer()))
+        await s3Put(imagesBlob[i], imageNames[i])
     }
 
     //String formating for tags
@@ -43,11 +47,12 @@ export async function POST(req: Request) {
         }
     }
 
+
     await prisma.product.create({
         data: {
             title: data.get('title') as string,
             description: data.get('description') as string,
-            images,
+            images: imageNames,
             priceJPY: parseInt(data.get('price-jpy') as string),
             priceCAD: parseInt(data.get('price-cad') as string),
             priceUSD: parseInt(data.get('price-usd') as string),
@@ -60,26 +65,33 @@ export async function POST(req: Request) {
     return new Response()
 }
 
-export async function PUT(req: Request) {
+export async function PUT(req: NextRequest) {
     const data = await req.formData()
-
     const imagesBlob = data.getAll('images') as Blob[]
-    let images: Buffer[] = []
-    for (let i = 0; i < imagesBlob.length; i++) {
+    let newImageNames: string[] = []
+    let productToUpdate;
 
-        if (imagesBlob[i].type != 'image/png' && imagesBlob[i].type != 'image/jpeg' && imagesBlob[i].type != 'image/webp') {
-            console.log('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format!')
+    if (imagesBlob) {
+        if (!validateUploadedImages(imagesBlob))
             return
+
+        newImageNames = getManyRandomNames(imagesBlob.length)
+
+        //Upload to AWS
+        for (let i = 0; i < imagesBlob.length; i++) {
+            await s3Put(imagesBlob[i], newImageNames[i])
         }
 
-        const maxImageSize = 2000 // In kilobytes
-        if ((imagesBlob[i].size / 1024) > maxImageSize) {
-            console.log('Image Upload Failure: All image files need to be less than 2MB in size!')
-            return
-        }
+        productToUpdate = await prisma.product.findUnique({
+            where: {
+                id: data.get('id') as string
+            }
+        })
 
-        images.push(Buffer.from(await imagesBlob[i].arrayBuffer()))
+        if (productToUpdate?.images)
+            newImageNames.concat(productToUpdate?.images as string[])
     }
+
 
     //String formating for tags
     const tagsString = data.get('tags') as string
@@ -93,11 +105,11 @@ export async function PUT(req: Request) {
     }
 
     let updateData;
-    if (images.length > 0) {
+    if (imagesBlob.length > 0) {
         updateData = {
             title: data.get('title') as string,
             description: data.get('description') as string,
-            images,
+            images: newImageNames,
             priceJPY: parseInt(data.get('price-jpy') as string),
             priceCAD: parseInt(data.get('price-cad') as string),
             priceUSD: parseInt(data.get('price-usd') as string),
@@ -131,11 +143,23 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
     const body = await req.json()
+
+    const productToDelete = await prisma.product.findUnique({
+        where: {
+            id: body.id
+        }
+    })
+
+    for (let i = 0; i < (productToDelete?.images as string[]).length; i++) {
+        await s3Delete(productToDelete?.images[i] as string)
+    };
+
     await prisma.product.delete({
         where: {
             id: body.id
         }
     })
+
     return new Response(JSON.stringify({
         id: body.id
     }))

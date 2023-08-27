@@ -1,4 +1,5 @@
 import { prisma } from "@/db";
+import { getS3Url } from "@/lib/awsHandler";
 import { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
 
@@ -20,6 +21,15 @@ export async function GET(req: NextRequest) {
         take: 10,
         orderBy: orderObj
     })
+
+    for (let j = 0; j < products.length; j++) {
+        //Get the image urls
+        for (let i = 0; i < (products[j].images as string[]).length; i++) {
+            products[j].images[i] = await getS3Url(products[j].images[i])
+            console.log(products[j].images[i])
+        }
+    };
+
 
     return new Response(JSON.stringify(products))
 }
