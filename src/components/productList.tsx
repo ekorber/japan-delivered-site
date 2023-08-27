@@ -1,36 +1,28 @@
+"use client"
+
+import { useEffect, useState } from 'react'
 import ProductListItem from './productListItem'
 import styles from '@/styles/productList.module.css'
+import { Product } from '@prisma/client'
 
 export default function () {
 
-    const data = [
-        {
-            imageURL: '/images/spiderman-comic.jpg',
-            productTitle: 'Spiderman Comic',
-        },
-        {
-            imageURL: '/images/batman-comic.jpg',
-            productTitle: 'Batman Comic',
-        },
-        {
-            imageURL: '/images/superman-comic.jpg',
-            productTitle: 'Superman Comic',
-        },
-        {
-            imageURL: '/images/darth-vader-comic.jpg',
-            productTitle: 'Darth Vader Comic',
-        },
-        {
-            imageURL: '/images/captain-america-comic.jpg',
-            productTitle: 'Captain America Comic',
-        },
-    ]
+    const [products, setProducts] = useState<Product[]>([])
+
+    useEffect(() => {
+        fetch('/admin/dashboard/product-list/', {
+            method: 'GET'
+        })
+            .then((res) => res.json())
+            .then((data) => setProducts(data))
+    }, [])
 
     return (
         <ul className={styles.product_list}>
-            {data.map(product => {
+            {products.map(product => {
+                console.log(new Blob([product.images[0]], { type: 'image/webp' }))
                 return (
-                    <ProductListItem imageURL={product.imageURL} altText='' productTitle={product.productTitle} />
+                    <ProductListItem key={product.id} imageURL={product.images[0]} altText='' productTitle={product.title} />
                 )
             })}
         </ul>
