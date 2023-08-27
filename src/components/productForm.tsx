@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '@/styles/productUploadForm.module.css'
 import TinyProductImage from "./tinyProductImage";
+import { MAX_IMAGES_PER_PRODUCT } from "@/data/productData";
 
 type ProductFormProps = {
     requestMethod: 'POST' | 'PUT',
@@ -58,27 +59,34 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
         e.preventDefault()
 
         const data = new FormData(e.currentTarget)
+
+        //Add id data for product editing
         if (requestMethod == 'PUT')
             data.append('id', input.id)
 
+        //Error checking for product creation
+        if (requestMethod == 'POST' && selectedFiles.length == 0) {
+            toast.error('At least one photo must be uploaded to the server.')
+            console.error('At least one photo must be uploaded to the server.')
+        }
+
+        //More error checking
         const maxImageSize = 2000 // In kilobytes
-        const imagesBlob = selectedFiles
+        for (let i = 0; i < selectedFiles.length; i++) {
 
-        for (let i = 0; i < imagesBlob.length; i++) {
-
-            if (imagesBlob[0].type == 'application/octet-stream') {
+            if (selectedFiles[0].type == 'application/octet-stream') {
                 data.delete('images')
                 break
             }
 
-            if (imagesBlob[i].type != 'image/png' && imagesBlob[i].type != 'image/jpeg' && imagesBlob[i].type != 'image/webp') {
+            if (selectedFiles[i].type != 'image/png' && selectedFiles[i].type != 'image/jpeg' && selectedFiles[i].type != 'image/webp') {
                 toast.error('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format.')
                 console.error('Image Upload Failure: All image files need to be in a png, jpg/jpeg or webp format.')
                 setLoading(false)
                 return
             }
 
-            if ((imagesBlob[i].size / 1024) > maxImageSize) {
+            if ((selectedFiles[i].size / 1024) > maxImageSize) {
                 toast.error('Image Upload Failure: All image files need to be less than 2MB in size.')
                 console.error('Image Upload Failure: All image files need to be less than 2MB in size.')
                 setLoading(false)
@@ -86,17 +94,19 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
             }
         }
 
+        //Append file data
         selectedFiles.forEach((file, i) => {
             data.append('images[' + i + ']', file)
         });
-
         data.append('numNewImages', selectedFiles.length.toString())
 
+        //Make request
         const res = await fetch('/admin/dashboard/product/', {
             method: requestMethod,
             body: data,
         })
 
+        //Handle repsonse
         if (res.ok) {
             router.push('/admin/dashboard')
         } else {
@@ -107,6 +117,14 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
     }
 
     function onFileInputChange(fileList: FileList) {
+
+        //Error checking
+        if (preExistingImageURLs.length + selectedFiles.length + fileList.length > MAX_IMAGES_PER_PRODUCT) {
+            toast.error('The maximum number of images is ' + MAX_IMAGES_PER_PRODUCT + '. Please select fewer images, or delete some to make room.')
+            console.error('The maximum number of images is ' + MAX_IMAGES_PER_PRODUCT + '. Please select fewer images, or delete some to make room.')
+            return
+        }
+
         let list: File[] = []
         for (let i = 0; i < fileList.length; i++) {
             list.push(fileList.item(i) as File)

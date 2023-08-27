@@ -1,3 +1,4 @@
+import { MAX_IMAGES_PER_PRODUCT } from '@/data/productData'
 import { prisma } from '@/db'
 import { getS3Url, s3Delete, s3Put } from '@/lib/awsHandler'
 import { getManyRandomNames } from '@/lib/cryptoHandler'
@@ -28,6 +29,12 @@ export async function POST(req: Request) {
         imagesBlob.push(data.get('images[' + i + ']') as Blob)
     }
 
+    //Error checking for min & max images
+    if (imagesBlob.length > MAX_IMAGES_PER_PRODUCT || imagesBlob.length == 0) {
+        return
+    }
+
+    //More error checking
     if (!validateUploadedImages(imagesBlob)) {
         return
     }
@@ -79,15 +86,9 @@ export async function PUT(req: NextRequest) {
     }
 
     if (imagesBlob) {
+        //Error checking for images
         if (!validateUploadedImages(imagesBlob))
             return
-
-        newImageNames = getManyRandomNames(imagesBlob.length)
-
-        //Upload new images to AWS
-        for (let i = 0; i < imagesBlob.length; i++) {
-            await s3Put(imagesBlob[i], newImageNames[i])
-        }
 
         //Get product
         productToUpdate = await prisma.product.findUnique({
@@ -96,7 +97,24 @@ export async function PUT(req: NextRequest) {
             }
         })
 
-        //If images already exist, add them to the new array
+        let numPreExistingProductImages = 0
+        if (productToUpdate?.images.length)
+            numPreExistingProductImages = productToUpdate.images.length
+
+        //Error checking for max images
+        if (imagesBlob.length + numPreExistingProductImages > MAX_IMAGES_PER_PRODUCT || imagesBlob.length + numPreExistingProductImages == 0) {
+            return
+        }
+
+        //Create image names
+        newImageNames = getManyRandomNames(imagesBlob.length)
+
+        //Upload new images to AWS
+        for (let i = 0; i < imagesBlob.length; i++) {
+            await s3Put(imagesBlob[i], newImageNames[i])
+        }
+
+        //If pre-existing images exist, add them to the array
         newImageNames = newImageNames.concat(productToUpdate?.images as string[])
     }
 
