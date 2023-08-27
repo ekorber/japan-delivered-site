@@ -15,7 +15,6 @@ export async function GET(req: NextRequest) {
     //Get the image urls
     for (let i = 0; i < (product?.images as string[]).length; i++) {
         (product as Product).images[i] = await getS3Url(product?.images[i] as string)
-        console.log(product?.images[i])
     }
 
     return new Response(JSON.stringify(product))
@@ -82,16 +81,17 @@ export async function PUT(req: NextRequest) {
             await s3Put(imagesBlob[i], newImageNames[i])
         }
 
+        //Get product
         productToUpdate = await prisma.product.findUnique({
             where: {
                 id: data.get('id') as string
             }
         })
 
-        if (productToUpdate?.images)
-            newImageNames.concat(productToUpdate?.images as string[])
-    }
+        //If images already exist, add them to the new array
+        newImageNames = newImageNames.concat(productToUpdate?.images as string[])
 
+    }
 
     //String formating for tags
     const tagsString = data.get('tags') as string
@@ -105,7 +105,7 @@ export async function PUT(req: NextRequest) {
     }
 
     let updateData;
-    if (imagesBlob.length > 0) {
+    if (imagesBlob) {
         updateData = {
             title: data.get('title') as string,
             description: data.get('description') as string,
