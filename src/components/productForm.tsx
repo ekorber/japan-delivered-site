@@ -20,7 +20,7 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
         id: '',
         title: '',
         description: '',
-        images: ([] as Buffer[]),
+        images: ([] as string[]),
         priceJPY: 100,
         priceCAD: 100,
         priceUSD: 100,
