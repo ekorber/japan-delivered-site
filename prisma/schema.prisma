@@ -14,8 +14,11 @@ model Product {
   id          String   @id @default(uuid())
   title       String
   description String
-  imageURLs   String[]
-  price       Int
+  images      String[]
+  priceJPY    Int
+  priceCAD    Int
+  priceUSD    Int
+  priceGBP    Int
   stock       Int      @default(99)
   tags        String[]
 }

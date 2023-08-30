@@ -1,0 +1,63 @@
+.formLayout {
+    margin: 30px 0 30px 0;
+    display: grid;
+    gap: 20px;
+    justify-content: center;
+    grid-template-columns: 200px 1fr 60px 1fr 200px;
+    grid-template-areas:
+        '.  title            .               priceJPY       .'
+        '.  description      .               priceCAD       .'
+        '.  images           .               priceUSD       .'
+        '.  stock            .               priceGBP       .'
+        '.  tags             .               .              .'
+        '.  cancelButton     -               submitButton   .';
+}
+
+.title {
+    grid-area: title;
+}
+
+.description {
+    grid-area: description;
+}
+
+.images {
+    grid-area: images
+}
+
+.tags {
+    grid-area: tags;
+}
+
+.stock {
+    grid-area: stock;
+}
+
+.priceJPY {
+    grid-area: priceJPY;
+}
+
+.priceCAD {
+    grid-area: priceCAD;
+}
+
+.priceUSD {
+    grid-area: priceUSD;
+}
+
+.priceGBP {
+    grid-area: priceGBP;
+}
+
+.cancelButton {
+    grid-area: cancelButton;
+}
+
+.submitButton {
+    grid-area: submitButton;
+    width: 100%;
+}
+
+.submitButton button {
+    width: 100%;
+}
