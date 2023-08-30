@@ -11,10 +11,10 @@ export default function TinyProductImage({ url, deleteImage, index }: TinyProduc
     return (
         <div className='mr-4 w-20 h-20 flex justify-center relative'>
             <Image className="p-2 object-contain" width={64} height={64} src={url} alt='' />
-            <button className="bg-red-600
+            <button className="bg-black
                                 hover:bg-white
                                 text-white
-                                hover:text-red-600
+                                hover:text-black
                                 p-2
                                 w-10
                                 h-10
@@ -23,9 +23,9 @@ export default function TinyProductImage({ url, deleteImage, index }: TinyProduc
                                 top-0
                                 rounded-lg
                                 border-2
-                                border-red-600"
+                                border-black"
 
-                onClick={(e) => { e.preventDefault(); deleteImage(index); }}>D</button>
+                onClick={(e) => { e.preventDefault(); deleteImage(index); }}><i className="fa-solid fa-trash"></i></button>
         </div>
     );
 }

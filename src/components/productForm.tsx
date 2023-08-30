@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import styles from '@/styles/productUploadForm.module.css'
 import TinyProductImage from "./tinyProductImage";
 import { MAX_IMAGES_PER_PRODUCT } from "@/data/productData";
+import Script from "next/script";
 
 type ProductFormProps = {
     requestMethod: 'POST' | 'PUT',
@@ -156,6 +157,8 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
 
     return (
         <>
+            <Script src="https://kit.fontawesome.com/72723071e2.js" strategy="lazyOnload" />
+
             <form onSubmit={submitWithValidation} className={styles.formLayout}>
 
                 <div className={styles.title}>
