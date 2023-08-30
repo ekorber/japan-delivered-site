@@ -9,13 +9,15 @@ import styles from '@/styles/productUploadForm.module.css'
 import TinyProductImage from "./tinyProductImage";
 import { MAX_IMAGES_PER_PRODUCT } from "@/data/productData";
 import Script from "next/script";
+import Link from "next/link";
 
 type ProductFormProps = {
     requestMethod: 'POST' | 'PUT',
     product?: Product,
+    cancelHref: string,
 }
 
-export default function ProductForm({ requestMethod, product }: ProductFormProps) {
+export default function ProductForm({ requestMethod, product, cancelHref }: ProductFormProps) {
 
     const router = useRouter()
     const [isLoading, setLoading] = useState(false)
@@ -227,8 +229,12 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
+                <div className={styles.cancelButton}>
+                    <Link href={cancelHref}><p className="text-center px-10 py-6 text-xl bg-red-700 text-white hover:bg-red-500">Cancel</p></Link>
+                </div>
+
                 <div className={styles.submitButton}>
-                    <button type="submit" disabled={isLoading || (requestMethod == 'PUT' && !product)} className="enabled:bg-black enabled:hover:bg-blue-700 enabled:text-white px-10 py-6 disabled:bg-slate-400 disabled:text-black">{isLoading ? 'Loading...' : 'Submit product to database'}</button>
+                    <button type="submit" disabled={isLoading || (requestMethod == 'PUT' && !product)} className="enabled:bg-black enabled:hover:bg-blue-700 enabled:text-white px-10 py-6 text-xl disabled:bg-slate-400 disabled:text-black">{isLoading ? 'Loading...' : 'Submit product to database'}</button>
                 </div>
             </form>
 

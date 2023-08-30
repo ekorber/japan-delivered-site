@@ -10,7 +10,7 @@
         '.  images           .               priceUSD       .'
         '.  stock            .               priceGBP       .'
         '.  tags             .               .              .'
-        '.  submitButton     submitButton    submitButton   .';
+        '.  cancelButton     -               submitButton   .';
 }
 
 .title {
@@ -49,9 +49,12 @@
     grid-area: priceGBP;
 }
 
+.cancelButton {
+    grid-area: cancelButton;
+}
+
 .submitButton {
     grid-area: submitButton;
-    margin-top: 30px;
     width: 100%;
 }
 
