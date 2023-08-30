@@ -173,19 +173,18 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
                     <input id="imageList" type="file" onChange={(e) => e.target.files ? onFileInputChange(e.target.files) : null} accept="image/png, image/jpeg, image/webp" required={requestMethod == 'POST'} multiple />
 
                     <div className="mt-4 flex">
-                        {selectedFiles.map((file, index) => {
-                            const url = URL.createObjectURL(file)
-                            return (
-                                <TinyProductImage key={url} url={url} index={index} deleteImage={removeImageFile} />
-                            )
-                        })}
-
                         {preExistingImageURLs.map((url, index) => {
                             return (
                                 <TinyProductImage key={url} url={url} index={index} deleteImage={removeImageURL} />
                             )
                         })}
 
+                        {selectedFiles.map((file, index) => {
+                            const url = URL.createObjectURL(file)
+                            return (
+                                <TinyProductImage key={url} url={url} index={index} deleteImage={removeImageFile} />
+                            )
+                        })}
                     </div>
                 </div>
 
