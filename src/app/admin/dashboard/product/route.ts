@@ -13,13 +13,16 @@ export async function GET(req: NextRequest) {
         }
     })
 
+    const imageNames = (product as Product).images as string[]
+
     //Get the image urls
-    for (let i = 0; i < (product?.images as string[]).length; i++) {
-        (product as Product).images[i] = await getS3Url(product?.images[i] as string)
+    for (let i = 0; i < imageNames.length; i++) {
+        imageNames[i] = await getS3Url(imageNames[i] as string)
     }
 
     return new Response(JSON.stringify(product))
 }
+
 
 export async function POST(req: Request) {
     const data = await req.formData()
@@ -75,20 +78,26 @@ export async function POST(req: Request) {
     return new Response()
 }
 
+
 export async function PUT(req: NextRequest) {
     const data = await req.formData()
     let newImageNames: string[] = []
-    let productToUpdate;
+    let productToUpdate
+    let imageList: string[] = []
+
+    let imageIndicesToDelete: number[] = []
+    for (let i = 0; i < parseInt(data.get('numURLIndices') as string); i++) {
+        imageIndicesToDelete.push(parseInt(data.get('urlIndex[' + i + ']') as string))
+    }
 
     let imagesBlob: Blob[] = []
     for (let i = 0; i < parseInt(data.get('numNewImages') as string); i++) {
         imagesBlob.push(data.get('images[' + i + ']') as Blob)
     }
 
-    if (imagesBlob) {
-        //Error checking for images
-        if (!validateUploadedImages(imagesBlob))
-            return
+
+    //If images are being added or deleted
+    if (imageIndicesToDelete || imagesBlob) {
 
         //Get product
         productToUpdate = await prisma.product.findUnique({
@@ -97,25 +106,53 @@ export async function PUT(req: NextRequest) {
             }
         })
 
-        let numPreExistingProductImages = 0
-        if (productToUpdate?.images.length)
-            numPreExistingProductImages = productToUpdate.images.length
+        const numPreExistingProductImages = (productToUpdate as Product).images.length
+        imageList = imageList.concat((productToUpdate as Product).images)
 
         //Error checking for max images
-        if (imagesBlob.length + numPreExistingProductImages > MAX_IMAGES_PER_PRODUCT || imagesBlob.length + numPreExistingProductImages == 0) {
+        if (imagesBlob.length + numPreExistingProductImages - imageIndicesToDelete.length > MAX_IMAGES_PER_PRODUCT
+            || imagesBlob.length + numPreExistingProductImages - imageIndicesToDelete.length <= 0) {
             return
         }
 
-        //Create image names
-        newImageNames = getManyRandomNames(imagesBlob.length)
+        //If pre-existing images exist, add them to the array
+        newImageNames = newImageNames.concat(imageList)
+    }
+
+
+    //Handle image deletion
+    if (imageIndicesToDelete) {
+
+        const imageNameDeletionList: string[] = []
+
+        //Create list of image names to delete
+        for (let i = 0; i < imageIndicesToDelete.length; i++) {
+            imageNameDeletionList.push(imageList[imageIndicesToDelete[i]])
+        }
+
+        //Delete images from AWS
+        for (let i = 0; i < imageNameDeletionList.length; i++) {
+            await s3Delete(imageNameDeletionList[i])
+            newImageNames = newImageNames.filter(name => name !== imageNameDeletionList[i])
+        }
+    }
+
+
+    //Handle new images
+    if (imagesBlob) {
+
+        //Error checking for images
+        if (!validateUploadedImages(imagesBlob))
+            return
+
+        //Generate image names
+        const imageNameAdditions: string[] = getManyRandomNames(imagesBlob.length)
+        newImageNames = newImageNames.concat(imageNameAdditions)
 
         //Upload new images to AWS
         for (let i = 0; i < imagesBlob.length; i++) {
-            await s3Put(imagesBlob[i], newImageNames[i])
+            await s3Put(imagesBlob[i], imageNameAdditions[i])
         }
-
-        //If pre-existing images exist, add them to the array
-        newImageNames = newImageNames.concat(productToUpdate?.images as string[])
     }
 
     //String formating for tags
@@ -129,8 +166,9 @@ export async function PUT(req: NextRequest) {
         }
     }
 
+    //Setup new data object
     let updateData;
-    if (imagesBlob) {
+    if (imageIndicesToDelete || imagesBlob) {
         updateData = {
             title: data.get('title') as string,
             description: data.get('description') as string,
@@ -165,6 +203,7 @@ export async function PUT(req: NextRequest) {
 
     return new Response()
 }
+
 
 export async function DELETE(req: Request) {
     const body = await req.json()

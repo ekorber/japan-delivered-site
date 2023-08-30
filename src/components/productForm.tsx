@@ -32,6 +32,7 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
     })
     const [selectedFiles, setSelectedFiles] = useState<File[]>([])
     const [preExistingImageURLs, setPreExistingImageURLs] = useState<string[]>([])
+    const [imageURLIndexDeleteArray, setImageURLIndexDeleteArray] = useState<number[]>([])
     const [unprocessedTags, setUnprocessedTags] = useState('')
 
 
@@ -64,10 +65,12 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
         if (requestMethod == 'PUT')
             data.append('id', input.id)
 
-        //Error checking for product creation
-        if (requestMethod == 'POST' && selectedFiles.length == 0) {
-            toast.error('At least one photo must be uploaded to the server.')
-            console.error('At least one photo must be uploaded to the server.')
+        //Error checking for number of product images
+        if (selectedFiles.length == 0 && preExistingImageURLs.length == 0) {
+            toast.error('At least one photo must be associated with the product.')
+            console.error('At least one photo must be associated with the product.')
+            setLoading(false)
+            return
         }
 
         //More error checking
@@ -94,11 +97,19 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
             }
         }
 
-        //Append file data
+        //Append new image data
         selectedFiles.forEach((file, i) => {
             data.append('images[' + i + ']', file)
         });
         data.append('numNewImages', selectedFiles.length.toString())
+
+
+        //Append image deletion data
+        imageURLIndexDeleteArray.forEach((index, i) => {
+            data.append('urlIndex[' + i + ']', index.toString())
+        });
+        data.append('numURLIndices', imageURLIndexDeleteArray.length.toString())
+
 
         //Make request
         const res = await fetch('/admin/dashboard/product/', {
@@ -134,6 +145,15 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
             setSelectedFiles(selectedFiles.concat(list))
     }
 
+    function removeImageFile(index: Number) {
+        setSelectedFiles(selectedFiles.filter((f, i) => i != index))
+    }
+
+    async function removeImageURL(index: number) {
+        setImageURLIndexDeleteArray([...imageURLIndexDeleteArray, index])
+        setPreExistingImageURLs(preExistingImageURLs.filter((f, i) => i != index))
+    }
+
     return (
         <>
             <form onSubmit={submitWithValidation} className={styles.formLayout}>
@@ -153,17 +173,16 @@ export default function ProductForm({ requestMethod, product }: ProductFormProps
                     <input id="imageList" type="file" onChange={(e) => e.target.files ? onFileInputChange(e.target.files) : null} accept="image/png, image/jpeg, image/webp" required={requestMethod == 'POST'} multiple />
 
                     <div className="mt-4 flex">
-                        {selectedFiles.map((file) => {
+                        {selectedFiles.map((file, index) => {
                             const url = URL.createObjectURL(file)
                             return (
-                                <TinyProductImage key={url} url={url} />
+                                <TinyProductImage key={url} url={url} index={index} deleteImage={removeImageFile} />
                             )
                         })}
 
-
-                        {preExistingImageURLs.map((url) => {
+                        {preExistingImageURLs.map((url, index) => {
                             return (
-                                <TinyProductImage key={url} url={url} />
+                                <TinyProductImage key={url} url={url} index={index} deleteImage={removeImageURL} />
                             )
                         })}
 
