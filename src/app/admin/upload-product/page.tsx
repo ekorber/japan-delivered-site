@@ -1,4 +1,3 @@
-import Link from "next/link"
 import ProductForm from "@/components/productForm"
 
 export default function UploadProductPage() {

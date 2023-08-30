@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import ProductForm from "@/components/productForm"
 import { useEffect, useState } from "react"
 import { Product } from "@prisma/client"
