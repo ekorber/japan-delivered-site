@@ -6,8 +6,8 @@ type TinyProductImageProps = {
 
 export default function TinyProductImage({ url }: TinyProductImageProps) {
     return (
-        <div className='mr-4 mt-1 inline-block'>
-            <Image className='' loading="lazy" width={32} height={32} src={url} alt='' style={{ objectFit: "contain" }} />
+        <div className='mr-4 w-20 h-20 flex justify-center'>
+            <Image className="p-2 object-contain" width={64} height={64} src={url} alt='' />
         </div>
     );
 }
