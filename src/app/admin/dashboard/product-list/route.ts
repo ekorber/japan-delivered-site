@@ -26,7 +26,6 @@ export async function GET(req: NextRequest) {
         //Get the image urls
         for (let i = 0; i < (products[j].images as string[]).length; i++) {
             products[j].images[i] = await getS3Url(products[j].images[i])
-            console.log(products[j].images[i])
         }
     };
 
