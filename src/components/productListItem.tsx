@@ -1,5 +1,4 @@
 import Image from "next/image"
-import styles from '@/styles/productListItem.module.css'
 
 type ProductListItemProps = {
     imageURL: string,
@@ -9,9 +8,9 @@ type ProductListItemProps = {
 
 export default function ProductListItem({ imageURL, altText, productTitle }: ProductListItemProps) {
     return (
-        <li className={styles.product_card}>
-            <Image className={styles.product_img} src={imageURL} width={280} height={280} alt={altText} />
-            <h2 className={styles.product_title}>{productTitle}</h2>
+        <li className='snap-center snap-always'>
+            <Image className='object-contain mx-auto' src={imageURL} width={280} height={280} alt={altText} />
+            <h2 className='text-center uppercase font-medium mt-2.5 mb-3.5'>{productTitle}</h2>
         </li>
     );
 }
