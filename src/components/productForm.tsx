@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '@/styles/productUploadForm.module.css'
 import TinyProductImage from "./tinyProductImage";
-import { MAX_IMAGES_PER_PRODUCT } from "@/data/productData";
+import { MAX_IMAGES_PER_PRODUCT, MAX_IMAGE_SIZE } from "@/data/productData";
 import Script from "next/script";
 import Link from "next/link";
 
@@ -77,7 +77,6 @@ export default function ProductForm({ requestMethod, product, cancelHref }: Prod
         }
 
         //More error checking
-        const maxImageSize = 2000 // In kilobytes
         for (let i = 0; i < selectedFiles.length; i++) {
 
             if (selectedFiles[0].type == 'application/octet-stream') {
@@ -92,7 +91,7 @@ export default function ProductForm({ requestMethod, product, cancelHref }: Prod
                 return
             }
 
-            if ((selectedFiles[i].size / 1024) > maxImageSize) {
+            if ((selectedFiles[i].size / 1024) > MAX_IMAGE_SIZE) {
                 toast.error('Image Upload Failure: All image files need to be less than 2MB in size.')
                 console.error('Image Upload Failure: All image files need to be less than 2MB in size.')
                 setLoading(false)

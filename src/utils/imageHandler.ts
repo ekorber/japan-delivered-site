@@ -1,4 +1,6 @@
-export function validateUploadedImages(images: Blob[], maxImageSize = 2000): boolean {
+import { MAX_IMAGE_SIZE } from "@/data/productData"
+
+export function validateUploadedImages(images: Blob[]): boolean {
 
     for (let i = 0; i < images.length; i++) {
 
@@ -9,7 +11,7 @@ export function validateUploadedImages(images: Blob[], maxImageSize = 2000): boo
         }
 
         //Check image size
-        if ((images[i].size / 1024) > maxImageSize) {
+        if ((images[i].size / 1024) > MAX_IMAGE_SIZE) {
             console.log('Image Upload Failure: All image files need to be less than 2MB in size!')
             return false
         }
