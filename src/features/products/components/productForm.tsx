@@ -6,7 +6,7 @@ import { Product } from "@prisma/client";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TinyProductImage from "./tinyProductImage";
-import { MAX_IMAGES_PER_PRODUCT, MAX_IMAGE_SIZE } from "@/data/productData";
+import { MAX_IMAGES_PER_PRODUCT, MAX_IMAGE_SIZE } from "@/features/products/data/productData";
 import Script from "next/script";
 import Link from "next/link";
 

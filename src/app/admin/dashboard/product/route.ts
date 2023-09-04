@@ -1,4 +1,4 @@
-import { MAX_IMAGES_PER_PRODUCT } from '@/data/productData'
+import { MAX_IMAGES_PER_PRODUCT } from '@/features/products/data/productData'
 import { prisma } from '@/db'
 import { getS3Url, s3Delete, s3Put } from '@/services/aws'
 import { getManyRandomNames } from '@/lib/crypto'

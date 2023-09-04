@@ -1,4 +1,4 @@
-import PrimaryButton from "./primaryButton";
+import PrimaryButton from "../../../components/primaryButton";
 
 export default function CheckoutForm() {
     return (

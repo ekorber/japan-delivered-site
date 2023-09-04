@@ -1,4 +1,4 @@
-import ProductForm from "@/components/productForm"
+import ProductForm from "@/features/products/components/productForm"
 
 export default function UploadProductPage() {
     return (

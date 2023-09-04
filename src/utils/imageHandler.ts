@@ -1,4 +1,4 @@
-import { MAX_IMAGE_SIZE } from "@/data/productData"
+import { MAX_IMAGE_SIZE } from "@/features/products/data/productData"
 
 export function validateUploadedImages(images: Blob[]): boolean {
 

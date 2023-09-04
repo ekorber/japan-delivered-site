@@ -1,5 +1,5 @@
 import Image from "next/image"
-import PrimaryButton from "./primaryButton";
+import PrimaryButton from "../../../components/primaryButton";
 import AddToCardButton from "./addToCartButton";
 
 type ProductListItemProps = {

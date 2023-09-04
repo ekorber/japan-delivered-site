@@ -1,6 +1,6 @@
 "use client"
 
-import ProductForm from "@/components/productForm"
+import ProductForm from "@/features/products/components/productForm"
 import { useEffect, useState } from "react"
 import { Product } from "@prisma/client"
 
