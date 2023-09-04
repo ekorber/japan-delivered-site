@@ -5,7 +5,6 @@ import { FormEvent, useEffect, useState } from "react"
 import { Product } from "@prisma/client";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import styles from '@/styles/productUploadForm.module.css'
 import TinyProductImage from "./tinyProductImage";
 import { MAX_IMAGES_PER_PRODUCT, MAX_IMAGE_SIZE } from "@/data/productData";
 import Script from "next/script";
@@ -160,23 +159,23 @@ export default function ProductForm({ requestMethod, product, cancelHref }: Prod
         <>
             <Script src="https://kit.fontawesome.com/72723071e2.js" strategy="lazyOnload" />
 
-            <form onSubmit={submitWithValidation} className={styles.formLayout}>
+            <form onSubmit={submitWithValidation} className='my-6 px-5'>
 
-                <div className={styles.title}>
+                <div className='mb-4'>
                     <label htmlFor="title" className="block">Product Title</label>
                     <input name="title" type="text" value={input?.title} onChange={(e) => setInput({ ...input, title: e.target.value })} placeholder="Enter Title" className="text-center border-2 border-black w-full" required minLength={3} maxLength={120} />
                 </div>
 
-                <div className={styles.description}>
+                <div className='mb-4'>
                     <label htmlFor="description" className="block">Product Description</label>
                     <textarea name="description" value={input?.description} onChange={(e) => setInput({ ...input, description: e.target.value })} placeholder="Enter Description" className="text-center border-2 border-black w-full" required minLength={3} maxLength={2000} />
                 </div>
 
-                <div className={styles.images}>
+                <div className='mb-4'>
                     <label htmlFor="imageList" className="block mb-1">Select the product images</label>
                     <input id="imageList" type="file" onChange={(e) => e.target.files ? onFileInputChange(e.target.files) : null} accept="image/png, image/jpeg, image/webp" required={requestMethod == 'POST'} multiple />
 
-                    <div className="mt-4 flex">
+                    <div className="mt-4 flex flex-wrap">
                         {preExistingImageURLs.map((url, index) => {
                             return (
                                 <TinyProductImage key={url} url={url} index={index} deleteImage={removeImageURL} />
@@ -192,48 +191,48 @@ export default function ProductForm({ requestMethod, product, cancelHref }: Prod
                     </div>
                 </div>
 
-                <div className={styles.stock}>
+                <div className='mb-4'>
                     <label htmlFor="stock" className="block">Available Stock</label>
                     <input name="stock" type="number" value={input?.stock || undefined} onChange={(e) => setInput({ ...input, stock: parseInt(e.target.value) })} placeholder="Enter Stock" className="text-center border-2 border-black w-full" required min={0} max={99} />
                     <p className="text-blue-700">If stock is irrelevant, just enter 99</p>
                 </div>
 
-                <div className={styles.tags}>
+                <div className='mb-4'>
                     <label htmlFor="tags" className="block">Product Tags</label>
                     <input name="tags" type="text" value={unprocessedTags} onChange={(e) => setUnprocessedTags(e.target.value)} placeholder="nintendo, joycon, zelda" className="text-center border-2 border-black w-full" required minLength={2} maxLength={250} />
                     <p>(relevant for user searching and being offered related products)</p>
                     <p className="text-blue-700">Seperate them with a comma.</p>
                 </div>
 
-                <div className={styles.priceJPY}>
+                <div className='mb-4'>
                     <label htmlFor="price-jpy" className="block">Product Price (JPY)</label>
                     <input name="price-jpy" type="number" value={input?.priceJPY || undefined} onChange={(e) => setInput({ ...input, priceJPY: parseInt(e.target.value) })} placeholder="Enter Japanese Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                 </div>
 
-                <div className={styles.priceCAD}>
+                <div className='mb-4'>
                     <label htmlFor="price-cad" className="block">Product Price (CAD)</label>
                     <input name="price-cad" type="number" value={input?.priceCAD || undefined} onChange={(e) => setInput({ ...input, priceCAD: parseInt(e.target.value) })} placeholder="Enter Canadian Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
-                <div className={styles.priceUSD}>
+                <div className='mb-4'>
                     <label htmlFor="price-usd" className="block">Product Price (USD)</label>
                     <input name="price-usd" type="number" value={input?.priceUSD || undefined} onChange={(e) => setInput({ ...input, priceUSD: parseInt(e.target.value) })} placeholder="Enter American Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
-                <div className={styles.priceGBP}>
+                <div className='mb-4'>
                     <label htmlFor="price-gbp" className="block">Product Price (GBP)</label>
                     <input name="price-gbp" type="number" value={input?.priceGBP || undefined} onChange={(e) => setInput({ ...input, priceGBP: parseInt(e.target.value) })} placeholder="Enter British Price" className="text-center border-2 border-black w-full" required min={100} max={99999999} />
                     <p className="text-blue-700">Price MUST BE in cents.</p>
                 </div>
 
-                <div className={styles.cancelButton}>
-                    <Link href={cancelHref}><p className="text-center px-10 py-6 text-xl bg-red-700 text-white hover:bg-red-500">Cancel</p></Link>
+                <div className='w-full mb-4'>
+                    <button type="submit" disabled={isLoading || (requestMethod == 'PUT' && !product)} className="w-full enabled:bg-black enabled:hover:bg-blue-700 enabled:text-white px-10 py-6 text-xl disabled:bg-slate-400 disabled:text-black">{isLoading ? 'Loading...' : 'Submit product to database'}</button>
                 </div>
 
-                <div className={styles.submitButton}>
-                    <button type="submit" disabled={isLoading || (requestMethod == 'PUT' && !product)} className="enabled:bg-black enabled:hover:bg-blue-700 enabled:text-white px-10 py-6 text-xl disabled:bg-slate-400 disabled:text-black">{isLoading ? 'Loading...' : 'Submit product to database'}</button>
+                <div className='mb-4'>
+                    <Link href={cancelHref}><p className="text-center px-10 py-6 text-xl bg-red-700 text-white hover:bg-red-500">Cancel</p></Link>
                 </div>
             </form>
 
