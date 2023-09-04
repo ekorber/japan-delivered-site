@@ -1,5 +1,4 @@
 import { Shojumaru } from 'next/font/google'
-import styles from '@/styles/primaryButton.module.css'
 
 const shojumaru = Shojumaru({
     weight: '400',
@@ -8,14 +7,13 @@ const shojumaru = Shojumaru({
 })
 
 type PrimaryButtonProps = {
+    className?: string,
     buttonText: string,
     buttonType?: "button" | "submit"
 }
 
-export default function PrimaryButton({ buttonText, buttonType }: PrimaryButtonProps) {
+export default function PrimaryButton({ className, buttonText, buttonType }: PrimaryButtonProps) {
     return (
-        <div className={styles.btn_container}>
-            <button className={`${shojumaru.className} ${styles.btn}`} type={buttonType}>{buttonText}</button>
-        </div >
+        <button className={`${shojumaru.className} ${className} mb-2.5 h-10 max-w-lg bg-primary-red text-white text-center text-2xl hover:duration-200 hover:bg-primary-red-dark hover:scale-105`} type={buttonType}>{buttonText}</button>
     );
 }

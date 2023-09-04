@@ -1,5 +1,5 @@
 import { prisma } from "@/db";
-import { getS3Url } from "@/lib/awsHandler";
+import { getS3Url } from "@/services/aws";
 import { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
 
