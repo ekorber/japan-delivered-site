@@ -7,14 +7,13 @@ const shojumaru = Shojumaru({
 })
 
 type PrimaryButtonProps = {
+    className: string,
     buttonText: string,
     buttonType?: "button" | "submit"
 }
 
-export default function PrimaryButton({ buttonText, buttonType }: PrimaryButtonProps) {
+export default function PrimaryButton({ className, buttonText, buttonType }: PrimaryButtonProps) {
     return (
-        <div className='mb-2.5 h-10 text-center'>
-            <button className={`${shojumaru.className} w-11/12 h-full max-w-lg bg-primary-red text-white text-2xl hover:duration-200 hover:bg-primary-red-dark hover:scale-105`} type={buttonType}>{buttonText}</button>
-        </div >
+        <button className={`${shojumaru.className} ${className} mb-2.5 h-10 max-w-lg bg-primary-red text-white text-center text-2xl hover:duration-200 hover:bg-primary-red-dark hover:scale-105`} type={buttonType}>{buttonText}</button>
     );
 }

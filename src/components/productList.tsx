@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import ProductListItem from './productListItem'
-import styles from '@/styles/productList.module.css'
 import { Product } from '@prisma/client'
 
 export default function () {
@@ -18,11 +17,11 @@ export default function () {
     }, [])
 
     return (
-        <ul className={styles.product_list}>
+        <ul className='my-10 px-5 flex flex-col lg:flex-row lg:flex-wrap gap-20 justify-center'>
             {products.map(product => {
                 console.log(new Blob([product.images[0]], { type: 'image/webp' }))
                 return (
-                    <ProductListItem key={product.id} imageURL={product.images[0]} altText='' productTitle={product.title} />
+                    <ProductListItem key={product.id} imageURL={product.images[0]} altText='' title={product.title} price={(product.priceCAD / 100).toFixed(2)} />
                 )
             })}
         </ul>
