@@ -1,7 +1,7 @@
 "use client"
 
 import AdminButton from "@/components/adminButton";
-import ProductDashboardTableRow from "@/components/productDashboardTableRow";
+import ProductDashboardTableRow from "@/features/products/components/productDashboardTableRow";
 import { ProductListOrder, getProductListOrderingQueryValues } from "@/utils/productListOrdering";
 import { Product } from "@prisma/client";
 import Link from "next/link";

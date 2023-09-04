@@ -7,7 +7,7 @@ const shojumaru = Shojumaru({
 })
 
 type PrimaryButtonProps = {
-    className: string,
+    className?: string,
     buttonText: string,
     buttonType?: "button" | "submit"
 }

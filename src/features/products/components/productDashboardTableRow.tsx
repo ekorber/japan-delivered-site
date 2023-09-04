@@ -1,7 +1,7 @@
 "use client"
 
 import { Product } from "@prisma/client";
-import AdminButton from "./adminButton";
+import AdminButton from "../../../components/adminButton";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
