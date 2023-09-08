@@ -21,7 +21,7 @@ export default function () {
             {products.map(product => {
                 console.log(new Blob([product.images[0]], { type: 'image/webp' }))
                 return (
-                    <ProductListItem key={product.id} imageURL={product.images[0]} altText='' title={product.title} price={(product.priceCAD / 100).toFixed(2)} />
+                    <ProductListItem key={product.id} id={product.id} imageURL={product.images[0]} altText='' title={product.title} price={(product.priceCAD / 100).toFixed(2)} />
                 )
             })}
         </ul>
