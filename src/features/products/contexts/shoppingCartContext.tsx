@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode, createContext, useContext, useState } from 'react';
 
 type ShoppingCartContext = {
@@ -28,7 +30,10 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
 
     const [cartItems, setCartItmes] = useState<CartItem[]>([])
 
-    const totalCartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0)
+    const totalCartQuantity = cartItems.reduce(
+        (quantity, item) => item.quantity + quantity,
+        0
+    )
 
     function getItemQuantity(id: string) {
         return cartItems.find(item => item.id === id)?.quantity || 0
@@ -36,7 +41,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
 
     function increaseCartQuantity(id: string) {
         setCartItmes(currentItems => {
-            if (currentItems.find(item => item.id)) {
+            if (currentItems.find(item => item.id == id)) {
                 return currentItems.map(item => {
                     if (item.id === id) {
                         return { ...item, quantity: item.quantity + 1 }
