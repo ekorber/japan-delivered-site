@@ -1,3 +1,6 @@
+"use client"
+
+import { ShoppingCartProvider } from '@/features/products/contexts/shoppingCartContext'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Nunito_Sans } from 'next/font/google'
@@ -16,7 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={nunito_sans.className}>{children}</body>
+      <ShoppingCartProvider>
+        <body className={nunito_sans.className}>{children}</body>
+      </ShoppingCartProvider>
     </html>
   )
 }
